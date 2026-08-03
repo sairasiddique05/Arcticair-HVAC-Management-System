@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import API from "../../api/axios";
 import {
   FaSearch,
   FaEye,
@@ -7,42 +8,21 @@ import {
   FaTimes,
 } from "react-icons/fa";
 
-const quotes = [
-  {
-    id: "QT-1001",
-    customer: "John Smith",
-    service: "AC Installation",
-    amount: "$2,500",
-    date: "02 Aug 2026",
-    status: "Pending",
-  },
-  {
-    id: "QT-1002",
-    customer: "Sarah Johnson",
-    service: "Heating Repair",
-    amount: "$450",
-    date: "03 Aug 2026",
-    status: "Approved",
-  },
-  {
-    id: "QT-1003",
-    customer: "Michael Brown",
-    service: "HVAC Maintenance",
-    amount: "$180",
-    date: "03 Aug 2026",
-    status: "Rejected",
-  },
-  {
-    id: "QT-1004",
-    customer: "Emily Davis",
-    service: "Duct Cleaning",
-    amount: "$300",
-    date: "04 Aug 2026",
-    status: "Pending",
-  },
-];
+
 
 const ManageQuotes = () => {
+  const [quotes, setQuotes] = useState([]);
+
+  useEffect(() => {
+    fetchQuotes();
+  }, []);
+
+  const fetchQuotes = async () => {
+    const res = await API.get("/quotes");
+    setQuotes(res.data);
+  };
+
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Pending":
@@ -122,11 +102,11 @@ const ManageQuotes = () => {
                 >
 
                   <td className="px-6 py-5 font-semibold">
-                    {quote.id}
+                    {quote._id.slice(-6).toUpperCase()}
                   </td>
 
                   <td className="px-6 py-5">
-                    {quote.customer}
+                    {quote.customer?.name}
                   </td>
 
                   <td className="px-6 py-5">
@@ -134,11 +114,11 @@ const ManageQuotes = () => {
                   </td>
 
                   <td className="px-6 py-5 font-semibold text-green-600">
-                    {quote.amount}
+                    ${quote.amount}
                   </td>
 
                   <td className="px-6 py-5">
-                    {quote.date}
+                    {new Date(quote.createdAt).toLocaleDateString()}
                   </td>
 
                   <td className="px-6 py-5 text-center">
@@ -168,12 +148,28 @@ const ManageQuotes = () => {
                       </button>
 
                       {/* Approve */}
-                      <button className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg">
+                      <button
+                        onClick={async () => {
+                          await API.put(`/quotes/${quote._id}/status`, {
+                            status: "Approved"
+                          });
+                          fetchQuotes();
+                        }}
+                        className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg"
+                      >
                         <FaCheck />
                       </button>
 
                       {/* Reject */}
-                      <button className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg">
+                      <button
+                        onClick={async () => {
+                          await API.put(`/quotes/${quote._id}/status`, {
+                            status: "Rejected"
+                          });
+                          fetchQuotes();
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg"
+                      >
                         <FaTimes />
                       </button>
 

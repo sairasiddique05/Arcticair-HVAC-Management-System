@@ -4,13 +4,14 @@ import { FaSearch, FaBell, FaUserCircle } from "react-icons/fa";
 
 
 const TopNavbar = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
    <header className="bg-white shadow-md px-8 py-4 flex items-center justify-between">
 
       {/* Left */}
       <div>
         <h2 className="text-2xl font-bold text-[#0F4C81]">
-          Welcome Back 👋
+         Welcome, {user?.name} 👋
         </h2>
 
         <p className="text-gray-500 text-sm">
@@ -47,13 +48,13 @@ const TopNavbar = () => {
           <FaUserCircle className="text-4xl text-[#0F4C81]" />
 
           <div className="hidden md:block">
-            <h3 className="font-semibold text-[#0F4C81]">
-              John Doe
-            </h3>
+          <h3 className="font-semibold text-[#0F4C81]">
+  {user?.name}
+</h3>
 
-            <p className="text-sm text-gray-500">
-              Customer
-            </p>
+<p className="text-sm text-gray-500">
+  Customer
+</p>
           </div>
 
         </div>

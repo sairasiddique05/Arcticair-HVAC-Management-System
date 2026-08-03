@@ -40,6 +40,8 @@ import ManageInvoice from './Components/admin/manageinvoice'
 import Reports from './Components/admin/reports'
 import Settings from './Components/admin/settings'
 import ProtectedRoute from './Components/protectedroute'
+import CustomerRequestDetails from './Pages/customerrequestdetails'
+import ReportDetails from './Components/admin/reportdetail'
 
 
 
@@ -59,6 +61,8 @@ function App() {
  <Route path='/area' element={<ServiceArea/>}/>
  <Route path='/rquote' element={<RequestQuote/>}/>
  <Route path='/contact' element={<Contact/>}/>
+ <Route path="/request/:id" element={<CustomerRequestDetails/>}/>
+
 
  <Route path='/customerdashboard' element={<ProtectedRoute allowedRole="customer"><CustomerDashboard/></ProtectedRoute>}>
   <Route index element={<DashboardHome/>} />
@@ -86,6 +90,7 @@ function App() {
   <Route path="quotes" element={<ManageQuotes/>} />
   <Route path="invoices" element={<ManageInvoice/>} />
   <Route path="reports" element={<Reports />} />
+   <Route path="reports/:id" element={<ReportDetails />}/>
   <Route path="settings" element={<Settings/>} />
 </Route>
 

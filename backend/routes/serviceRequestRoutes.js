@@ -9,7 +9,9 @@ import {
    submitServiceReport,
    submitReport,
    uploadPhotos,
-   getCustomerRequests
+   getCustomerRequests,
+   getAllReports,
+   getReportById,
 } from "../controllers/servicerequestController.js";
 
 const router = express.Router();
@@ -20,10 +22,12 @@ router.put("/:id/assign", assignTechnician);
 router.get("/:id", getSingleRequest);
 router.get("/technician/:id", getTechnicianRequests);
 router.put("/:id/start", startJob);
-router.put("/:id/report", submitServiceReport);
+// router.put("/:id/report", submitServiceReport);
 router.put("/:id/report", submitReport);
 router.put("/:id/photos", uploadPhotos);
 router.get("/customer/:customerId", getCustomerRequests);
+router.get("/reports", getAllReports);
+router.get("/reports/:id", getReportById);
 
 
 export default router;

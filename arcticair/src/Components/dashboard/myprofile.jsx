@@ -10,14 +10,16 @@ import {
 } from "react-icons/fa";
 
 const MyProfile = () => {
-    const [profile, setProfile] = useState({
-    fullName: "John Doe",
-    email: "john@example.com",
-    phone: "+1 (800) 123-4567",
-    address: "123 Arctic Avenue, New York",
-    password: "",
-    confirmPassword: "",
-  });
+   const user = JSON.parse(localStorage.getItem("user"));
+
+const [profile, setProfile] = useState({
+  fullName: user?.name || "",
+  email: user?.email || "",
+  phone: user?.phone || "",
+  currentPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+});
 
   const handleChange = (e) => {
     setProfile({

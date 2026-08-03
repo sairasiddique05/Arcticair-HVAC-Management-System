@@ -1,34 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import API from "../../api/axios";
+import { FaEye } from "react-icons/fa";
 import {
   FaDollarSign,
   FaClipboardCheck,
   FaUsers,
   FaUserCog,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-const monthlyReports = [
-  {
-    month: "August",
-    revenue: "$18,500",
-    jobs: 94,
-    customers: 42,
-  },
-  {
-    month: "July",
-    revenue: "$16,200",
-    jobs: 81,
-    customers: 37,
-  },
-  {
-    month: "June",
-    revenue: "$14,900",
-    jobs: 73,
-    customers: 34,
-  },
-];
 
 
 const Reports = () => {
+  const [reports, setReports] = useState([]);
+
+  useEffect(() => {
+  fetchReports();
+}, []);
+
+const fetchReports = async () => {
+  try {
+   const res = await API.get("/requests/reports");
+    setReports(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
   return (
    <section className="p-8 bg-slate-100 min-h-screen">
 
@@ -135,35 +133,55 @@ const Reports = () => {
             </thead>
 
             <tbody>
+  {reports.length === 0 ? (
+    <tr>
+      <td colSpan="7" className="text-center py-10 text-gray-500">
+        No reports submitted.
+      </td>
+    </tr>
+  ) : (
+    reports.map((report) => (
+      <tr
+        key={report._id}
+        className="border-b hover:bg-slate-50"
+      >
+        <td className="px-6 py-5">
+          {report._id.slice(-6).toUpperCase()}
+        </td>
 
-              {monthlyReports.map((report, index) => (
+        <td className="px-6 py-5">
+          {report.request?.customer?.name}
+        </td>
 
-                <tr
-                  key={index}
-                  className="border-b hover:bg-slate-50"
-                >
+        <td className="px-6 py-5">
+          {report.technician?.name}
+        </td>
 
-                  <td className="px-6 py-5 font-semibold">
-                    {report.month}
-                  </td>
+        <td className="px-6 py-5">
+          {report.request?.serviceType}
+        </td>
 
-                  <td className="px-6 py-5 text-green-600 font-semibold">
-                    {report.revenue}
-                  </td>
+        <td className="px-6 py-5">
+          {report.jobStatus}
+        </td>
 
-                  <td className="px-6 py-5">
-                    {report.jobs}
-                  </td>
+        <td className="px-6 py-5">
+          {new Date(report.createdAt).toLocaleDateString()}
+        </td>
 
-                  <td className="px-6 py-5">
-                    {report.customers}
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
+        <td className="px-6 py-5 text-center">
+          <Link
+  to={`/admindashboard/reports/${report._id}`}
+  className="bg-[#0F4C81] hover:bg-blue-900 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+>
+  <FaEye />
+  View
+</Link>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
 
           </table>
 

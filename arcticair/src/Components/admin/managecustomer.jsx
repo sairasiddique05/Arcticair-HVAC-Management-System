@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import API from "../../api/axios";
 import {
   FaSearch,
   FaEye,
@@ -6,38 +7,25 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-const customers = [
-  {
-    id: "CUS-001",
-    name: "John Smith",
-    email: "john@example.com",
-    phone: "+1 (555) 123-4567",
-    city: "New York",
-  },
-  {
-    id: "CUS-002",
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
-    phone: "+1 (555) 987-6543",
-    city: "Chicago",
-  },
-  {
-    id: "CUS-003",
-    name: "Michael Brown",
-    email: "michael@example.com",
-    phone: "+1 (555) 654-3210",
-    city: "Dallas",
-  },
-  {
-    id: "CUS-004",
-    name: "Emily Davis",
-    email: "emily@example.com",
-    phone: "+1 (555) 456-7890",
-    city: "Miami",
-  },
-];
+
 
 const ManageCustomers = () => {
+const [customers, setCustomers] = useState([]);
+
+
+useEffect(() => {
+  fetchCustomers();
+}, []);
+
+const fetchCustomers = async () => {
+  try {
+    const res = await API.get("/users/customers");
+    setCustomers(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
   return (
     <section className="p-8">
 
@@ -98,59 +86,57 @@ const ManageCustomers = () => {
             </thead>
 
             <tbody>
+  {customers.length === 0 ? (
+    <tr>
+      <td colSpan="6" className="text-center py-8 text-gray-500">
+        No customers found.
+      </td>
+    </tr>
+  ) : (
+    customers.map((customer) => (
+      <tr
+        key={customer._id}
+        className="border-b hover:bg-slate-50 transition"
+      >
+        <td className="px-6 py-5 font-semibold">
+          {customer._id.slice(-6).toUpperCase()}
+        </td>
 
-              {customers.map((customer) => (
+        <td className="px-6 py-5">
+          {customer.name}
+        </td>
 
-                <tr
-                  key={customer.id}
-                  className="border-b hover:bg-slate-50 transition"
-                >
+        <td className="px-6 py-5">
+          {customer.email}
+        </td>
 
-                  <td className="px-6 py-5 font-semibold">
-                    {customer.id}
-                  </td>
+        <td className="px-6 py-5">
+          {customer.phone}
+        </td>
 
-                  <td className="px-6 py-5">
-                    {customer.name}
-                  </td>
+        <td className="px-6 py-5">
+          {customer.role}
+        </td>
 
-                  <td className="px-6 py-5">
-                    {customer.email}
-                  </td>
+        <td className="px-6 py-5">
+          <div className="flex justify-center gap-3">
+            <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg">
+              <FaEye />
+            </button>
 
-                  <td className="px-6 py-5">
-                    {customer.phone}
-                  </td>
+            <button className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg">
+              <FaEdit />
+            </button>
 
-                  <td className="px-6 py-5">
-                    {customer.city}
-                  </td>
-
-                  <td className="px-6 py-5">
-
-                    <div className="flex justify-center gap-3">
-
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg">
-                        <FaEye />
-                      </button>
-
-                      <button className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg">
-                        <FaEdit />
-                      </button>
-
-                      <button className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg">
-                        <FaTrash />
-                      </button>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
+            <button className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg">
+              <FaTrash />
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
 
           </table>
 

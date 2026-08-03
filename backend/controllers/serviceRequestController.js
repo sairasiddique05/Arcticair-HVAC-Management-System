@@ -277,3 +277,56 @@ export const getCustomerRequests = async (req, res) => {
     });
   }
 };
+
+
+export const getAllReports = async (req, res) => {
+  try {
+    const reports = await ServiceReport.find()
+      .populate({
+        path: "request",
+        populate: {
+          path: "customer",
+          select: "name email phone",
+        },
+      })
+      .populate("technician", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(reports);
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getReportById = async (req, res) => {
+  try {
+    const report = await ServiceReport.findById(req.params.id)
+      .populate({
+        path: "request",
+        populate: {
+          path: "customer",
+          select: "name email phone",
+        },
+      })
+      .populate("technician", "name email");
+
+    if (!report) {
+      return res.status(404).json({
+        success: false,
+        message: "Report not found",
+      });
+    }
+
+    res.status(200).json(report);
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

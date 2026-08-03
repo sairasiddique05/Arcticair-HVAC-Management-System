@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import API from "../api/axios";
+
 import {
   FaUser,
   FaEnvelope,
@@ -42,13 +44,20 @@ const QuoteForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    console.log(formData);
+  try {
+    await API.post("/quotes", formData);
 
     alert("Quote request submitted successfully!");
-  };
+
+  } catch (error) {
+    console.log(error);
+    alert("Something went wrong!");
+  }
+};
+
   return (
   <section className="py-20 bg-slate-100">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-10">

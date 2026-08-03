@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import API from "../../api/axios";
 import {
   FaSearch,
   FaEye,
@@ -6,38 +7,38 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 
-const invoices = [
-  {
-    id: "INV-1001",
-    customer: "John Smith",
-    amount: "$2,500",
-    dueDate: "05 Aug 2026",
-    status: "Paid",
-  },
-  {
-    id: "INV-1002",
-    customer: "Sarah Johnson",
-    amount: "$450",
-    dueDate: "08 Aug 2026",
-    status: "Pending",
-  },
-  {
-    id: "INV-1003",
-    customer: "Michael Brown",
-    amount: "$180",
-    dueDate: "10 Aug 2026",
-    status: "Paid",
-  },
-  {
-    id: "INV-1004",
-    customer: "Emily Davis",
-    amount: "$300",
-    dueDate: "12 Aug 2026",
-    status: "Pending",
-  },
-];
 
 const ManageInvoice = () => {
+
+  const [invoices, setInvoices] = useState([]);
+
+  useEffect(() => {
+  fetchInvoices();
+}, []);
+
+const fetchInvoices = async () => {
+  try {
+    const res = await API.get("/invoices");
+    setInvoices(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const markPaid = async (id) => {
+  try {
+    await API.put(`/invoices/${id}/pay`);
+
+    alert("Invoice marked as paid.");
+
+    fetchInvoices();
+  } catch (error) {
+    console.log(error);
+    alert("Failed to update invoice.");
+  }
+};
+
+
     const getStatusColor = (status) => {
     switch (status) {
       case "Paid":
@@ -109,71 +110,72 @@ const ManageInvoice = () => {
 
             </thead>
 
-            <tbody>
+           <tbody>
+  {invoices.length === 0 ? (
+    <tr>
+      <td colSpan="6" className="text-center py-10 text-gray-500">
+        No invoices found.
+      </td>
+    </tr>
+  ) : (
+    invoices.map((invoice) => (
+      <tr
+        key={invoice._id}
+        className="border-b hover:bg-slate-50 transition"
+      >
+        <td className="px-6 py-5 font-semibold">
+          {invoice._id.slice(-6).toUpperCase()}
+        </td>
 
-              {invoices.map((invoice) => (
+        <td className="px-6 py-5">
+          {invoice.customer?.name}
+        </td>
 
-                <tr
-                  key={invoice.id}
-                  className="border-b hover:bg-slate-50 transition"
-                >
+        <td className="px-6 py-5 font-semibold text-green-600">
+          ${invoice.amount}
+        </td>
 
-                  <td className="px-6 py-5 font-semibold">
-                    {invoice.id}
-                  </td>
+        <td className="px-6 py-5">
+          {new Date(invoice.dueDate).toLocaleDateString()}
+        </td>
 
-                  <td className="px-6 py-5">
-                    {invoice.customer}
-                  </td>
+        <td className="px-6 py-5 text-center">
+          <span
+            className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
+              invoice.status
+            )}`}
+          >
+            {invoice.status}
+          </span>
+        </td>
 
-                  <td className="px-6 py-5 font-semibold text-green-600">
-                    {invoice.amount}
-                  </td>
+        <td className="px-6 py-5">
+          <div className="flex justify-center gap-3">
 
-                  <td className="px-6 py-5">
-                    {invoice.dueDate}
-                  </td>
+            {/* View */}
+            <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg">
+              <FaEye />
+            </button>
 
-                  <td className="px-6 py-5 text-center">
+            {/* Download */}
+            <button className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg">
+              <FaDownload />
+            </button>
 
-                    <span
-                      className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
-                        invoice.status
-                      )}`}
-                    >
-                      {invoice.status}
-                    </span>
+            {/* Mark Paid */}
+            <button
+              onClick={() => markPaid(invoice._id)}
+              className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg"
+            >
+              <FaCheckCircle />
+            </button>
 
-                  </td>
-
-                  <td className="px-6 py-5">
-
-                    <div className="flex justify-center gap-3">
-
-                      {/* View */}
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg">
-                        <FaEye />
-                      </button>
-
-                      {/* Download */}
-                      <button className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg">
-                        <FaDownload />
-                      </button>
-
-                      {/* Mark Paid */}
-                      <button className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-lg">
-                        <FaCheckCircle />
-                      </button>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
+          </div>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
 
           </table>
 

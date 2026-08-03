@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../../api/axios";
 import { FaEye } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 
 const MyRequest = () => {
@@ -134,13 +135,13 @@ const fetchRequests = async () => {
 
         <td className="px-6 py-5 text-center">
 
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 mx-auto transition">
-
-            <FaEye />
-
-            View
-
-          </button>
+         <Link
+  to={`/request/${request._id}`}
+  className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 mx-auto w-fit transition"
+>
+  <FaEye />
+  View
+</Link>
 
         </td>
 
