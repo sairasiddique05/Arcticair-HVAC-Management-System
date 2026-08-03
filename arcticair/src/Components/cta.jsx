@@ -17,7 +17,7 @@ const Cta = () => {
         </p>
 
         <Link
-          to="/request-service"
+          to="/login"
           className="inline-flex items-center gap-3 mt-10 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-lg transition duration-300"
         >
           Request Service

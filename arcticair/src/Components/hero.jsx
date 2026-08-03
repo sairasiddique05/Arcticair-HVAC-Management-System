@@ -36,7 +36,7 @@ const Hero = () => {
           </p>
        <div className="flex gap-3">
           <Link
-            to="/requests"
+            to="/login"
             className="border border-white px-4 py-2 rounded-lg hover:bg-white hover:text-[#0F4C81] transition"
           >
            Request Service

@@ -27,7 +27,7 @@ const AboutHero = () => {
         <div className="mt-10 flex justify-center gap-5 flex-wrap">
 
           <Link
-            to="/requests"
+            to="/login"
             className="bg-orange-500 hover:bg-orange-600 px-8 py-4 rounded-xl text-lg font-semibold transition"
           >
             Request Service

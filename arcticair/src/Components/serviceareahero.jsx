@@ -22,7 +22,7 @@ const ServiceAreahero = () => {
         </p>
 
         <Link
-          to="/request-service"
+          to="/login"
           className="inline-block mt-8 bg-orange-500 hover:bg-orange-600 px-8 py-4 rounded-xl font-semibold"
         >
           Request Service
