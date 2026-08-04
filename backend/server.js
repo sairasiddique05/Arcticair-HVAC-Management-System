@@ -14,7 +14,7 @@ dotenv.config();
 // Connect Database
 connectDB();
 
-app.use(express.json());
+
 
 const app = express();
 
