@@ -12,7 +12,7 @@ import {
    getCustomerRequests,
    getAllReports,
    getReportById,
-} from "../controllers/servicerequestController.js";
+} from "../controllers/serviceRequestController.js";
 
 const router = express.Router();
 
