@@ -1,4 +1,4 @@
-import ServiceRequest from "../models/Servicerequest.js";
+import ServiceRequest from "../models/servicerequest.js";
 
 
 //Service Request
