@@ -9,9 +9,6 @@ build/
 .env
 .env.*
 
-# Frontend confidential files
-arcticair/src/api/
-
 # Backend confidential files
 backend/src/config/
 backend/.env
