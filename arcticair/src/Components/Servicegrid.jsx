@@ -151,7 +151,7 @@ const ServiceGrid = () => {
                 </div>
 
                 <Link
-                  to="/request-service"
+                  to="/login"
                   className="block text-center bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold transition"
                 >
                   Request Service
