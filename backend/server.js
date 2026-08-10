@@ -8,6 +8,7 @@ import serviceRequestRoutes from "./routes/serviceRequestRoutes.js";
 import userRoutes from "./routes/userroute.js";
 import invoiceRoutes from "./routes/invoiceroute.js";
 import quoteRoutes from "./routes/quoteRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use("/api/requests", serviceRequestRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/quotes", quoteRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 // Test Route
