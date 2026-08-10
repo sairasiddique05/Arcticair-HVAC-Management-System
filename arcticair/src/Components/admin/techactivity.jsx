@@ -1,35 +1,41 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
 import {
   FaUserCog,
   FaCircle,
   FaMapMarkerAlt,
   FaArrowRight,
 } from "react-icons/fa";
-import { Link } from 'react-router-dom';
-
-const technicians = [
-  {
-    id: "TECH-001",
-    name: "Michael Johnson",
-    status: "On Job",
-    location: "123 Main Street",
-  },
-  {
-    id: "TECH-002",
-    name: "David Wilson",
-    status: "Available",
-    location: "Office",
-  },
-  {
-    id: "TECH-003",
-    name: "Chris Evans",
-    status: "Offline",
-    location: "—",
-  },
-];
+import { Link } from "react-router-dom";
+import API from "../../api/axios";
 
 const TechActivity = () => {
-    const statusColor = (status) => {
+  const [technicians, setTechnicians] = useState([]);
+
+  useEffect(() => {
+    fetchTechnicians();
+  }, []);
+
+  const fetchTechnicians = async () => {
+    try {
+      const res = await API.get("/users/technicians");
+
+      setTechnicians(res.data.slice(0, 3));
+    } catch (error) {
+      console.log("Failed to fetch technicians:", error);
+    }
+  };
+
+  const getStatus = (tech) => {
+    // If your backend already has a status field
+    if (tech.status) {
+      return tech.status;
+    }
+
+    // Default status if status is not stored in User model
+    return "Available";
+  };
+
+  const statusColor = (status) => {
     switch (status) {
       case "Available":
         return "text-green-500";
@@ -44,8 +50,9 @@ const TechActivity = () => {
         return "text-gray-400";
     }
   };
+
   return (
-   <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div>
 
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
@@ -55,7 +62,7 @@ const TechActivity = () => {
         </h2>
 
         <Link
-          to="/admin-dashboard/technicians"
+          to="/admindashboard/technicians"
           className="flex items-center gap-2 text-orange-500 hover:text-orange-600 font-semibold"
         >
           View All
@@ -64,65 +71,86 @@ const TechActivity = () => {
 
       </div>
 
+      {/* Technicians */}
       <div className="space-y-5">
 
-        {technicians.map((tech) => (
+        {technicians.length === 0 ? (
 
-          <div
-            key={tech.id}
-            className="border rounded-xl p-4 hover:shadow-md transition"
-          >
-
-            <div className="flex justify-between items-center">
-
-              <div className="flex items-center gap-3">
-
-                <div className="w-12 h-12 rounded-full bg-[#0F4C81] flex items-center justify-center text-white">
-                  <FaUserCog />
-                </div>
-
-                <div>
-
-                  <h3 className="font-semibold text-[#0F4C81]">
-                    {tech.name}
-                  </h3>
-
-                  <p className="text-sm text-gray-500">
-                    {tech.id}
-                  </p>
-
-                </div>
-
-              </div>
-
-              <div className="flex items-center gap-2">
-
-                <FaCircle className={`text-xs ${statusColor(tech.status)}`} />
-
-                <span className="font-medium">
-                  {tech.status}
-                </span>
-
-              </div>
-
-            </div>
-
-            <div className="flex items-center gap-2 mt-4 text-gray-600">
-
-              <FaMapMarkerAlt className="text-red-500" />
-
-              <span>{tech.location}</span>
-
-            </div>
-
+          <div className="text-center py-8 text-gray-500">
+            No technicians found.
           </div>
 
-        ))}
+        ) : (
+
+          technicians.map((tech) => {
+
+            const status = getStatus(tech);
+
+            return (
+              <div
+                key={tech._id}
+                className="border rounded-xl p-4 hover:shadow-md transition"
+              >
+
+                <div className="flex justify-between items-center">
+
+                  {/* Technician Info */}
+                  <div className="flex items-center gap-3">
+
+                    <div className="w-12 h-12 rounded-full bg-[#0F4C81] flex items-center justify-center text-white">
+                      <FaUserCog />
+                    </div>
+
+                    <div>
+
+                      <h3 className="font-semibold text-[#0F4C81]">
+                        {tech.name}
+                      </h3>
+
+                      <p className="text-sm text-gray-500">
+                        TECH-{tech._id?.slice(-5).toUpperCase()}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  {/* Status */}
+                  <div className="flex items-center gap-2">
+
+                    <FaCircle
+                      className={`text-xs ${statusColor(status)}`}
+                    />
+
+                    <span className="font-medium">
+                      {status}
+                    </span>
+
+                  </div>
+
+                </div>
+
+                {/* Location */}
+                <div className="flex items-center gap-2 mt-4 text-gray-600">
+
+                  <FaMapMarkerAlt className="text-red-500" />
+
+                  <span>
+                    {tech.address || tech.location || "Location not available"}
+                  </span>
+
+                </div>
+
+              </div>
+            );
+          })
+
+        )}
 
       </div>
 
     </div>
-  )
-}
+  );
+};
 
-export default TechActivity
+export default TechActivity;
