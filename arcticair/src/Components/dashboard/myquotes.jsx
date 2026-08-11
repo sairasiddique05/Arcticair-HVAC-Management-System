@@ -198,6 +198,15 @@ const MyQuotes = () => {
         </p>
 
       </div>
+      
+
+      <Link
+  to="/request-quote"
+  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold transition"
+>
+  + Request New Quote
+</Link>
+
 
       {/* Table */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
