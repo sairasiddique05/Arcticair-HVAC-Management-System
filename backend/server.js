@@ -9,6 +9,7 @@ import userRoutes from "./routes/userroute.js";
 import invoiceRoutes from "./routes/invoiceroute.js";
 import quoteRoutes from "./routes/quoteRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/quotes", quoteRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/reports", reportRoutes);
 
 
 // Test Route
