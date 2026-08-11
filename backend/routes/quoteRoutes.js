@@ -4,7 +4,7 @@ import {
   createQuote,
   getQuotes,
   getMyQuotes,
-  updateQuoteStatus,
+  updateQuote,
 } from "../controllers/quoteController.js";
 
 import { protect } from "../middleware/authMiddleware.js";
@@ -16,9 +16,13 @@ router.post("/", createQuote);
 // Admin - all quotes
 router.get("/", getQuotes);
 
-// Logged-in customer - only their quotes
+// Customer - own quotes only
 router.get("/my", protect, getMyQuotes);
 
-router.put("/:id/status", updateQuoteStatus);
+// Edit quote / amount
+router.put("/:id", updateQuote);
+
+// Approve / Reject
+router.put("/:id/status", updateQuote);
 
 export default router;
