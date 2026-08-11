@@ -17,7 +17,8 @@ const MyQuotes = () => {
      const res = await API.get("/quotes/my");
       setQuotes(res.data);
     } catch (error) {
-      console.log("Failed to fetch quotes:", error);
+  console.log("Failed to fetch quotes:", error);
+    console.log("BACKEND ERROR:", error.response?.data);
     }
   };
 
