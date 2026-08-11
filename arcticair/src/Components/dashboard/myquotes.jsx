@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../../api/axios";
 import { FaDownload, FaEye, FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const MyQuotes = () => {
   const [quotes, setQuotes] = useState([]);
@@ -198,7 +199,7 @@ const MyQuotes = () => {
         </p>
 
       </div>
-
+      
 
       <Link
   to="/rquote"
