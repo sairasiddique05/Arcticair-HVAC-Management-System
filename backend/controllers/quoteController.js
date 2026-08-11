@@ -33,9 +33,10 @@ export const updateQuoteStatus = async (req, res) => {
     res.json(quote);
 
   } catch (error) {
-  console.log(error);
-  console.log(error.response);
+    console.log(error);
 
-  alert(error.response?.data?.message || "Something went wrong");
-}
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };

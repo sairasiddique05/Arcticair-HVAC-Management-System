@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import API from "../api/axios";
-
 import {
   FaUser,
   FaEnvelope,
@@ -48,13 +47,48 @@ const QuoteForm = () => {
   e.preventDefault();
 
   try {
-    await API.post("/quotes", formData);
+    const quoteData = {
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      serviceType: formData.serviceType,
+      propertyType: formData.propertyType,
+      address: formData.address,
+      preferredDate: formData.preferredDate,
+      propertySize: formData.propertySize,
+      description: formData.description,
+    };
+
+    const res = await API.post("/quotes", quoteData);
+
+    console.log("Quote submitted:", res.data);
 
     alert("Quote request submitted successfully!");
 
+    setFormData({
+      fullName: "",
+      email: "",
+      phone: "",
+      serviceType: "",
+      propertyType: "",
+      address: "",
+      preferredDate: "",
+      propertySize: "",
+      description: "",
+      image: null,
+    });
+
   } catch (error) {
-    console.log(error);
-    alert("Something went wrong!");
+    console.log("Quote submission error:", error);
+    console.log(
+  "Backend response:",
+  JSON.stringify(error.response?.data, null, 2)
+);
+
+    alert(
+      error.response?.data?.message ||
+      "Something went wrong while submitting the quote."
+    );
   }
 };
 
