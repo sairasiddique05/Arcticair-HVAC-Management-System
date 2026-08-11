@@ -20,18 +20,18 @@ export const getQuotes = async (req, res) => {
   }
 };
 
-export const updateQuoteStatus = async (req, res) => {
+export const updateQuote = async (req, res) => {
   try {
     const quote = await Quote.findByIdAndUpdate(
       req.params.id,
       {
+        amount: req.body.amount,
         status: req.body.status,
       },
       { new: true }
     );
 
     res.json(quote);
-
   } catch (error) {
     console.log(error);
 

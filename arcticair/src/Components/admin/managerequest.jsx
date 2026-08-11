@@ -5,14 +5,19 @@ import {
   FaEye,
   FaTrash,
   FaUserCog,
+  FaFileInvoiceDollar,
 } from "react-icons/fa";
 
 const ManageRequest = () => {
 const [requests, setRequests] = useState([]);
 const [technicians, setTechnicians] = useState([]);
 const [selectedRequest, setSelectedRequest] = useState(null);
+const [showViewModal, setShowViewModal] = useState(false);
 const [selectedTech, setSelectedTech] = useState("");
 const [showModal, setShowModal] = useState(false);
+const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+const [invoiceAmount, setInvoiceAmount] = useState("");
+const [invoiceDueDate, setInvoiceDueDate] = useState("");
 
 useEffect(() => {
   fetchRequests();
@@ -77,6 +82,37 @@ const assignTechnician = async () => {
   } catch (error) {
     console.log(error);
     alert("Failed to assign technician");
+  }
+};
+
+const generateInvoice = async () => {
+  if (!invoiceAmount || !invoiceDueDate) {
+    alert("Please enter amount and due date");
+    return;
+  }
+
+  try {
+    await API.post("/invoices", {
+      request: selectedRequest._id,
+      customer: selectedRequest.customer._id,
+      amount: Number(invoiceAmount),
+      dueDate: invoiceDueDate,
+    });
+
+    alert("Invoice generated successfully!");
+
+    setShowInvoiceModal(false);
+    setSelectedRequest(null);
+    setInvoiceAmount("");
+    setInvoiceDueDate("");
+  } catch (error) {
+    console.log("Invoice error:", error);
+    console.log("Backend response:", error.response?.data);
+
+    alert(
+      error.response?.data?.message ||
+        "Failed to generate invoice"
+    );
   }
 };
 
@@ -181,10 +217,16 @@ const assignTechnician = async () => {
 
                     <div className="flex justify-center gap-3">
 
-                      {/* View */}
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg">
-                        <FaEye />
-                      </button>
+                     <button
+  onClick={() => {
+    setSelectedRequest(request);
+    setShowViewModal(true);
+  }}
+  title="View Request"
+  className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg"
+>
+  <FaEye />
+</button>
 
                       {/* Assign */}
                       <button
@@ -197,10 +239,27 @@ const assignTechnician = async () => {
   <FaUserCog />
 </button>
 
-                      {/* Delete */}
-                      <button className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg">
-                        <FaTrash />
-                      </button>
+               
+
+{request.status === "Completed" ? (
+  <button
+    onClick={() => {
+      setSelectedRequest(request);
+      setShowInvoiceModal(true);
+    }}
+    title="Generate Invoice"
+    className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg"
+  >
+    <FaFileInvoiceDollar />
+  </button>
+) : (
+  <button
+    title="Delete Request"
+    className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg"
+  >
+    <FaTrash />
+  </button>
+)}
 
                     </div>
 
@@ -262,6 +321,339 @@ const assignTechnician = async () => {
   </div>
 )}
 
+{showInvoiceModal && selectedRequest && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+    <div className="bg-white w-[450px] rounded-2xl shadow-xl p-6">
+
+      <h2 className="text-2xl font-bold text-[#0F4C81] mb-6">
+        Generate Invoice
+      </h2>
+
+      {/* Customer */}
+
+      <div className="mb-4">
+
+        <label className="block text-sm font-semibold text-gray-600 mb-2">
+          Customer
+        </label>
+
+        <input
+          type="text"
+          value={selectedRequest.customer?.name || ""}
+          disabled
+          className="w-full border rounded-lg p-3 bg-gray-100"
+        />
+
+      </div>
+
+      {/* Service */}
+
+      <div className="mb-4">
+
+        <label className="block text-sm font-semibold text-gray-600 mb-2">
+          Service
+        </label>
+
+        <input
+          type="text"
+          value={selectedRequest.serviceType || ""}
+          disabled
+          className="w-full border rounded-lg p-3 bg-gray-100"
+        />
+
+      </div>
+
+      {/* Amount */}
+
+      <div className="mb-4">
+
+        <label className="block text-sm font-semibold text-gray-600 mb-2">
+          Invoice Amount
+        </label>
+
+        <input
+          type="number"
+          placeholder="Enter amount"
+          value={invoiceAmount}
+          onChange={(e) => setInvoiceAmount(e.target.value)}
+          className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-[#0F4C81]"
+        />
+
+      </div>
+
+      {/* Due Date */}
+
+      <div className="mb-6">
+
+        <label className="block text-sm font-semibold text-gray-600 mb-2">
+          Due Date
+        </label>
+
+        <input
+          type="date"
+          value={invoiceDueDate}
+          onChange={(e) => setInvoiceDueDate(e.target.value)}
+          className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-[#0F4C81]"
+        />
+
+      </div>
+
+      {/* Buttons */}
+
+      <div className="flex justify-end gap-3">
+
+        <button
+          onClick={() => {
+            setShowInvoiceModal(false);
+            setSelectedRequest(null);
+            setInvoiceAmount("");
+            setInvoiceDueDate("");
+          }}
+          className="px-5 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={generateInvoice}
+          className="px-5 py-2 rounded-lg bg-[#0F4C81] hover:bg-blue-900 text-white"
+        >
+          Create Invoice
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+
+{showViewModal && selectedRequest && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+    <div className="bg-white w-[600px] max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl p-7">
+
+      <div className="flex justify-between items-center mb-6">
+
+        <h2 className="text-2xl font-bold text-[#0F4C81]">
+          Service Request Details
+        </h2>
+
+        <button
+          onClick={() => {
+            setShowViewModal(false);
+            setSelectedRequest(null);
+          }}
+          className="text-gray-500 hover:text-red-500 text-xl"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <div className="space-y-4">
+
+        {/* Request ID */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Request ID
+          </p>
+
+          <p className="font-semibold text-[#0F4C81]">
+            {selectedRequest._id?.slice(-6).toUpperCase()}
+          </p>
+        </div>
+
+        {/* Customer */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Customer
+          </p>
+
+          <p className="font-semibold">
+            {selectedRequest.customer?.name || "N/A"}
+          </p>
+        </div>
+
+        {/* Email */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Email
+          </p>
+
+          <p>
+            {selectedRequest.customer?.email || "N/A"}
+          </p>
+        </div>
+
+        {/* Service */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Service
+          </p>
+
+          <p className="font-semibold">
+            {selectedRequest.serviceType}
+          </p>
+        </div>
+
+        {/* Date */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Preferred Date
+          </p>
+
+          <p>
+            {selectedRequest.preferredDate
+              ? new Date(
+                  selectedRequest.preferredDate
+                ).toLocaleDateString()
+              : "N/A"}
+          </p>
+        </div>
+
+        {/* Time */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Preferred Time
+          </p>
+
+          <p>
+            {selectedRequest.preferredTime || "N/A"}
+          </p>
+        </div>
+
+        {/* Property */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Property Type
+          </p>
+
+          <p>
+            {selectedRequest.propertyType || "N/A"}
+          </p>
+        </div>
+
+        {/* Address */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Address
+          </p>
+
+          <p>
+            {selectedRequest.address || "N/A"}
+          </p>
+        </div>
+
+        {/* Technician */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Assigned Technician
+          </p>
+
+          <p>
+            {selectedRequest.assignedTechnician?.name ||
+              "Not Assigned"}
+          </p>
+        </div>
+
+        {/* Status */}
+        <div>
+          <p className="text-sm text-gray-500 mb-1">
+            Status
+          </p>
+
+          <span
+            className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
+              selectedRequest.status
+            )}`}
+          >
+            {selectedRequest.status}
+          </span>
+        </div>
+
+        {/* Description */}
+        <div>
+          <p className="text-sm text-gray-500">
+            Description
+          </p>
+
+          <div className="bg-slate-50 rounded-lg p-4 mt-1">
+            {selectedRequest.description || "No description provided."}
+          </div>
+        </div>
+
+        {/* Completed Job Information */}
+
+        {selectedRequest.status === "Completed" && (
+          <div className="border-t pt-5 mt-5">
+
+            <h3 className="text-lg font-bold text-[#0F4C81] mb-4">
+              Service Report
+            </h3>
+
+            <div className="space-y-3">
+
+              <div>
+                <p className="text-sm text-gray-500">
+                  Work Performed
+                </p>
+
+                <p>
+                  {selectedRequest.workPerformed ||
+                    "Not provided"}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-500">
+                  Parts Used
+                </p>
+
+                <p>
+                  {selectedRequest.partsUsed ||
+                    "None"}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-500">
+                  Recommendation
+                </p>
+
+                <p>
+                  {selectedRequest.recommendation ||
+                    selectedRequest.recommendations ||
+                    "None"}
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
+      </div>
+
+      <div className="flex justify-end mt-7">
+
+        <button
+          onClick={() => {
+            setShowViewModal(false);
+            setSelectedRequest(null);
+          }}
+          className="px-6 py-2 rounded-lg bg-[#0F4C81] hover:bg-blue-900 text-white"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </section>
   )
 }
