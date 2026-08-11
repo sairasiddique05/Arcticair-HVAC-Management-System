@@ -59,9 +59,7 @@ const QuoteForm = () => {
       description: formData.description,
     };
 
-    const res = await API.post("/quotes", quoteData);
-
-    console.log("Quote submitted:", res.data);
+    await API.post("/quotes", quoteData);
 
     alert("Quote request submitted successfully!");
 
@@ -80,14 +78,11 @@ const QuoteForm = () => {
 
   } catch (error) {
     console.log("Quote submission error:", error);
-    console.log(
-  "Backend response:",
-  JSON.stringify(error.response?.data, null, 2)
-);
+    console.log("Backend response:", error.response?.data);
 
     alert(
       error.response?.data?.message ||
-      "Something went wrong while submitting the quote."
+      "Something went wrong!"
     );
   }
 };

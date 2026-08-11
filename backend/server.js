@@ -23,7 +23,9 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://arcticair-hvac-management-system-flax.vercel.app",
+    origin:[  "http://localhost:5174",
+      "http://localhost:5173",
+      "https://arcticair-hvac-management-system-flax.vercel.app"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
