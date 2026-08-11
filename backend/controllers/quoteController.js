@@ -2,10 +2,18 @@ import Quote from "../models/Quote.js";
 
 export const createQuote = async (req, res) => {
   try {
-    const quote = await Quote.create(req.body);
+    const quote = await Quote.create({
+      ...req.body,
+      customer: req.user._id,
+    });
+
     res.status(201).json(quote);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.log("Create quote error:", err);
+
+    res.status(500).json({
+      message: err.message,
+    });
   }
 };
 

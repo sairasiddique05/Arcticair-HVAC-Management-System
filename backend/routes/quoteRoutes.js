@@ -11,7 +11,7 @@ import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", createQuote);
+router.post("/", protect, createQuote);
 
 // Admin - all quotes
 router.get("/", getQuotes);
