@@ -1,13 +1,35 @@
 import Invoice from "../models/invoice.js";
 
-// Create Invoice
 export const createInvoice = async (req, res) => {
   try {
-    const invoice = await Invoice.create(req.body);
+    const { request, customer, amount, dueDate } = req.body;
+
+    // Check if invoice already exists for this service request
+    const existingInvoice = await Invoice.findOne({ request });
+
+    if (existingInvoice) {
+      return res.status(400).json({
+        message: "Invoice already exists for this service request.",
+        invoice: existingInvoice,
+      });
+    }
+
+    const invoice = await Invoice.create({
+      request,
+      customer,
+      amount,
+      dueDate,
+      status: "Pending",
+    });
 
     res.status(201).json(invoice);
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.log("Create invoice error:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
